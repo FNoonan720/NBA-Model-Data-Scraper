@@ -3,19 +3,22 @@ import java.util.ArrayList;
 public class CTGTable {
 
     ArrayList<TeamReport> rows;
-    String title, venue;
+    String title, date;
 
-    public CTGTable(ArrayList<TeamReport> rows, String title, String venue) {
+    public CTGTable(ArrayList<TeamReport> rows, String title, String date) {
         this.rows = rows;
         this.title = title;
-        this.venue = venue;
+        this.date = date;
     }
 
-    public void toCsv() {
+    public String toCsv() {
+        var strBuilder = new StringBuilder();
+        strBuilder.append(title).append("\n");
         for(var row : rows) {
-            System.out.print(row.toCsv());
+            strBuilder.append(row.toCsv());
         }
-        System.out.print("\n");
+        strBuilder.append("\n");
+        return strBuilder.toString();
     }
 
     public ArrayList<TeamReport> getRows() {
@@ -34,11 +37,11 @@ public class CTGTable {
         this.title = title;
     }
 
-    public String getVenue() {
-        return venue;
+    public String getDate() {
+        return date;
     }
 
-    public void setVenue(String venue) {
-        this.venue = venue;
+    public void setDate(String date) {
+        this.date = date;
     }
 }

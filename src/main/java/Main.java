@@ -1,11 +1,15 @@
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
 
 public class Main {
+
+    public static final LocalDate todaysDate = LocalDate.now();
 
     public static final ArrayList<String> tableNames = new ArrayList<>(Arrays.asList(
             "Entire Season - home",
@@ -16,14 +20,14 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
 
-        var tableList = getCTGTables(getCTGUrls(getCTGURLDetails(getDateMap())));
+        /*
+         Generates CSV file called 'CTG-Output.csv' that stores Four Factors data
+         scraped from Cleaning The Glass for both the entire season & the last 2 weeks.
+         Additionally, there are separate tables for home vs. road results.
+         */
+        writeCTGDataToFile(getCTGTables(getCTGUrls(getCTGURLDetails(getDateMap()))));
 
-        for (var table : tableList) {
-            System.out.println(table.getTitle());
-            table.toCsv();
-        }
 
-        // TODO Write tables to csv file
 
     }
 
@@ -104,7 +108,7 @@ public class Main {
             rows.sort(Comparator.comparing(TeamReport::getTeamName));
             tableList.add(new CTGTable(rows,
                     tableNames.get(i),
-                    tableNames.get(i).substring(tableNames.get(i).length()-4)));
+                    todaysDate.toString()));
 
         }
 
@@ -127,6 +131,26 @@ public class Main {
         }
 
         return parsedStatValues;
+    }
+
+    public static void writeCTGDataToFile(ArrayList<CTGTable> tableList) throws IOException {
+        var csvContent = new StringBuilder();
+        csvContent.append(formatDate(todaysDate)).append("\n");
+        for (var table : tableList) {
+            csvContent.append(table.toCsv());
+        }
+
+        var basePath = new File("").getAbsolutePath();
+        var csvFile = new File(basePath + "\\CTG-Output.csv");
+        var fileWriter = new FileWriter(csvFile, true);
+
+        fileWriter.write(csvContent.toString());
+        fileWriter.close();
+
+    }
+
+    public static String formatDate(LocalDate date) {
+        return date.getMonthValue() + "-" + date.getDayOfMonth() + "-" + date.getYear();
     }
 
 }
