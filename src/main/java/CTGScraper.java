@@ -25,47 +25,25 @@ public class CTGScraper {
     }
 
     public void run() throws IOException {
-        writeCTGDataToFile(getCTGTables(getCTGUrls(getCTGURLDetails(todaysDate))));
+        writeCTGDataToFile(
+                getCTGTables(
+                        getCTGUrls(
+                                getCTGURLDetails())));
     }
 
-    public ArrayList<URLDetails> getCTGURLDetails(LocalDate today) {
-
-        var urlDetails = new ArrayList<URLDetails>();
-        for(var title : this.tableNames) {
-            if(title.split(" ")[0].equals("Entire")) {
-                urlDetails.add(new URLDetails(title, title.split(" ")[title.split(" ").length-1],
-                        Integer.toString(today.getMonthValue()),
-                        Integer.toString(today.getDayOfMonth()),
-                        Integer.toString(today.getYear())));
-            }
-            else {
-                urlDetails.add(new URLDetails(title, title.split(" ")[title.split(" ").length-1],
-                        Integer.toString(today.minusDays(15).getMonthValue()),
-                        Integer.toString(today.minusDays(15).getDayOfMonth()),
-                        Integer.toString(today.minusDays(15).getYear()),
-                        Integer.toString(today.getMonthValue()),
-                        Integer.toString(today.getDayOfMonth()),
-                        Integer.toString(today.getYear())));
-            }
+    public void writeCTGDataToFile(ArrayList<CTGTable> tableList) throws IOException {
+        var csvContent = new StringBuilder();
+        csvContent.append(formatDate(todaysDate)).append("\n");
+        for (var table : tableList) {
+            csvContent.append(table.toCsv());
         }
 
-        return urlDetails;
-    }
+        var csvFile = new File(new File("").getAbsolutePath() + "\\CTG-Output.csv");
+        var fileWriter = new FileWriter(csvFile, true);
 
-    public ArrayList<String> getCTGUrls(ArrayList<URLDetails> urlDetails) {
-        var CTGUrls = new ArrayList<String>();
-        for(var urlDetail : urlDetails) {
-            CTGUrls.add("https://www.cleaningtheglass.com/stats/league/fourfactors?season=2019&seasontype=regseason" +
-                    "&start=" + urlDetail.getStartMonth() +
-                    "/" + urlDetail.getStartDayOfMonth() +
-                    "/" + urlDetail.getStartYear() +
-                    "&end=" + urlDetail.getEndMonth() +
-                    "/" + urlDetail.getEndDayOfMonth() +
-                    "/" + urlDetail.getEndYear() +
-                    "&venue=" + urlDetail.getVenue());
-        }
+        fileWriter.write(csvContent.toString());
+        fileWriter.close();
 
-        return CTGUrls;
     }
 
     public ArrayList<CTGTable> getCTGTables(ArrayList<String> urls) throws IOException {
@@ -101,6 +79,46 @@ public class CTGScraper {
         return tableList;
     }
 
+    public ArrayList<String> getCTGUrls(ArrayList<URLDetails> urlDetails) {
+        var CTGUrls = new ArrayList<String>();
+        for(var urlDetail : urlDetails) {
+            CTGUrls.add("https://www.cleaningtheglass.com/stats/league/fourfactors?season=2019&seasontype=regseason" +
+                    "&start=" + urlDetail.getStartMonth() +
+                    "/" + urlDetail.getStartDayOfMonth() +
+                    "/" + urlDetail.getStartYear() +
+                    "&end=" + urlDetail.getEndMonth() +
+                    "/" + urlDetail.getEndDayOfMonth() +
+                    "/" + urlDetail.getEndYear() +
+                    "&venue=" + urlDetail.getVenue());
+        }
+
+        return CTGUrls;
+    }
+
+    public ArrayList<URLDetails> getCTGURLDetails() {
+
+        var urlDetails = new ArrayList<URLDetails>();
+        for(var title : this.tableNames) {
+            if(title.split(" ")[0].equals("Entire")) {
+                urlDetails.add(new URLDetails(title, title.split(" ")[title.split(" ").length-1],
+                        Integer.toString(todaysDate.getMonthValue()),
+                        Integer.toString(todaysDate.getDayOfMonth()),
+                        Integer.toString(todaysDate.getYear())));
+            }
+            else {
+                urlDetails.add(new URLDetails(title, title.split(" ")[title.split(" ").length-1],
+                        Integer.toString(todaysDate.minusDays(15).getMonthValue()),
+                        Integer.toString(todaysDate.minusDays(15).getDayOfMonth()),
+                        Integer.toString(todaysDate.minusDays(15).getYear()),
+                        Integer.toString(todaysDate.getMonthValue()),
+                        Integer.toString(todaysDate.getDayOfMonth()),
+                        Integer.toString(todaysDate.getYear())));
+            }
+        }
+
+        return urlDetails;
+    }
+
     public ArrayList<Double> parseStatValues(Elements statValues) {
 
         var parsedStatValues = new ArrayList<Double>();
@@ -117,22 +135,6 @@ public class CTGScraper {
         }
 
         return parsedStatValues;
-    }
-
-    public void writeCTGDataToFile(ArrayList<CTGTable> tableList) throws IOException {
-        var csvContent = new StringBuilder();
-        csvContent.append(formatDate(todaysDate)).append("\n");
-        for (var table : tableList) {
-            csvContent.append(table.toCsv());
-        }
-
-        var basePath = new File("").getAbsolutePath();
-        var csvFile = new File(basePath + "\\CTG-Output.csv");
-        var fileWriter = new FileWriter(csvFile, true);
-
-        fileWriter.write(csvContent.toString());
-        fileWriter.close();
-
     }
 
     public static String formatDate(LocalDate date) {

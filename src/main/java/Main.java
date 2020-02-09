@@ -4,8 +4,8 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
 
-        var scraper = new CTGScraper();
-        scraper.run();
+        new CTGScraper().run();
+        new InjuryReportScraper().run();
 
     }
 
