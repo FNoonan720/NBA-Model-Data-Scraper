@@ -38,7 +38,8 @@ public class CTGScraper {
             csvContent.append(table.toCsv());
         }
 
-        var csvFile = new File(new File("").getAbsolutePath() + "\\CTG-Output.csv");
+        var csvFile = new File(new File("").getAbsolutePath() +
+                "\\CTG-Output.csv");
         var fileWriter = new FileWriter(csvFile, true);
 
         fileWriter.write(csvContent.toString());

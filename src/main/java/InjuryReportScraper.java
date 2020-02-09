@@ -4,14 +4,12 @@ import org.apache.pdfbox.text.PDFTextStripper;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
 
 public class InjuryReportScraper {
 
@@ -35,23 +33,34 @@ public class InjuryReportScraper {
     }
 
     public void writeInjRepDataToFile(String text) throws IOException {
-        var csvFile = new File(new File("").getAbsolutePath() + "\\Injury-Report-Output.txt");
+        var csvFile = new File(new File("").getAbsolutePath() +
+                "\\Injury-Report-Output.txt");
         var fileWriter = new FileWriter(csvFile, true);
 
         fileWriter.write(text);
+        fileWriter.write("\n\n");
+        fileWriter.flush();
         fileWriter.close();
     }
 
     public String pdfAtURLToText(String urlString) throws IOException {
-
-        URL url = new URL(urlString);
-        try (InputStream in = url.openStream()) {
-            Files.copy(in, Paths.get(urlString.split("/")[urlString.split("/").length-1]), StandardCopyOption.REPLACE_EXISTING);
+        var url = new URL(urlString);
+        try (var in = url.openStream()) {
+            Files.copy(in, Paths.get(urlString.split("/")[urlString.split("/").length-1]),
+                    StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             // Unreachable
         }
+        var pdf = PDDocument.load(new File(urlString.split("/")[urlString.split("/").length-1]));
+        var text = new PDFTextStripper().getText(pdf);
+        pdf.close();
 
-        return new PDFTextStripper().getText(PDDocument.load(new File(urlString.split("/")[urlString.split("/").length-1])));
+        var deleted = new File(urlString.split("/")[urlString.split("/").length-1]).delete();
+        if(!deleted) {
+            System.out.println("\nUnable to delete file '" +
+                    urlString.split("/")[urlString.split("/").length-1] + "'.");
+        }
+        return text;
     }
 
     public String getInjRepURL() {
