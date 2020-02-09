@@ -55,9 +55,9 @@ public class CTGScraper {
             var teamNames = document.getElementsByClass("team_name");
             var parsedStatValues = parseStatValues(document.getElementsByClass("stat value"));
 
-            var rows = new ArrayList<TeamReport>();
-            for(int j = 0; j < teamNames.size(); j++) {
-                rows.add(new TeamReport(teamNames.get(j).text(),
+            var rows = new ArrayList<CTGTeamReport>();
+            for (int j = 0; j < teamNames.size(); j++) {
+                rows.add(new CTGTeamReport(teamNames.get(j).text(),
                         parsedStatValues.get(j * (parsedStatValues.size() / teamNames.size())).intValue(),
                         parsedStatValues.get(j * (parsedStatValues.size() / teamNames.size()) + 1).intValue(),
                         parsedStatValues.get(j * (parsedStatValues.size() / teamNames.size()) + 2),
@@ -70,7 +70,7 @@ public class CTGScraper {
                         parsedStatValues.get(j * (parsedStatValues.size() / teamNames.size()) + 9),
                         parsedStatValues.get(j * (parsedStatValues.size() / teamNames.size()) + 10)));
             }
-            rows.sort(Comparator.comparing(TeamReport::getTeamName));
+            rows.sort(Comparator.comparing(CTGTeamReport::getTeamName));
             tableList.add(new CTGTable(rows,
                     tableNames.get(i),
                     todaysDate.toString()));
