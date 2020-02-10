@@ -6,7 +6,6 @@ public class Main {
 
         new CTGScraper().run();
         new InjuryReportScraper().run();
-        new NBADotComScraper().run();
 
     }
 
