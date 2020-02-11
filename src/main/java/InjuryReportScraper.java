@@ -60,6 +60,11 @@ public class InjuryReportScraper {
             System.out.println("\nUnable to delete file '" +
                     urlString.split("/")[urlString.split("/").length-1] + "'.");
         }
+
+        if (text.contains(formatDate(todaysDate))) {
+            return "";
+        }
+
         return text;
     }
 
@@ -77,6 +82,12 @@ public class InjuryReportScraper {
                 String.format("%02d", todaysDate.getMonthValue()) + "-" +
                 String.format("%02d", todaysDate.getDayOfMonth()) + "_0" +
                 injRepTime + "PM.pdf";
+    }
+
+    public String formatDate(LocalDate date) {
+        return String.format("%02d", date.getMonthValue()) + "/" +
+                String.format("%02d", date.getDayOfMonth()) + "/" +
+                date.getYear();
     }
 
 }
