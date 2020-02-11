@@ -2,12 +2,14 @@ import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Scanner;
 
 public class CTGScraper {
 
@@ -38,6 +40,8 @@ public class CTGScraper {
             csvContent.append(table.toCsv());
         }
 
+        cleanOutputFile();
+
         var csvFile = new File(new File("").getAbsolutePath() +
                 "\\CTG-Output.csv");
         var fileWriter = new FileWriter(csvFile, true);
@@ -45,6 +49,23 @@ public class CTGScraper {
         fileWriter.write(csvContent.toString());
         fileWriter.close();
 
+    }
+
+    public void cleanOutputFile() throws IOException {
+        var file = new File("CTG-Output.csv");
+        var scan = new Scanner(file);
+        var cleanCsv = new StringBuilder();
+        while (scan.hasNextLine()) {
+            var line = scan.nextLine();
+            if (line.contains(formatDate(todaysDate))) {
+                break;
+            }
+            cleanCsv.append(line).append("\n");
+        }
+
+        var fileWriter = new FileWriter(file);
+        fileWriter.write(cleanCsv.toString());
+        fileWriter.close();
     }
 
     public ArrayList<CTGTable> getCTGTables(ArrayList<String> urls) throws IOException {
