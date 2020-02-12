@@ -16,8 +16,13 @@ public class InjuryReportScraper {
     LocalDate todaysDate;
     double hourOfDay;
 
-    public InjuryReportScraper() {
-        this.todaysDate = LocalDate.now();
+//    public InjuryReportScraper() {
+//        this.todaysDate = LocalDate.now();
+//        this.hourOfDay = LocalTime.now().getHour() + LocalTime.now().getMinute() / 60.0;
+//    }
+
+    public InjuryReportScraper(LocalDate date) {
+        this.todaysDate = date;
         this.hourOfDay = LocalTime.now().getHour() + LocalTime.now().getMinute() / 60.0;
     }
 
@@ -36,6 +41,10 @@ public class InjuryReportScraper {
         var csvFile = new File(new File("").getAbsolutePath() +
                 "\\Injury-Report-Output.txt");
         var fileWriter = new FileWriter(csvFile, true);
+
+        if(text.equals("")) {
+            return;
+        }
 
         fileWriter.write(text);
         fileWriter.write("\n\n");
@@ -61,7 +70,7 @@ public class InjuryReportScraper {
                     urlString.split("/")[urlString.split("/").length-1] + "'.");
         }
 
-        if (text.contains(formatDate(todaysDate))) {
+        if (text.contains("Injury Report: " + formatDate(todaysDate))) {
             return "";
         }
 
