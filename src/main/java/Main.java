@@ -13,7 +13,7 @@ public class Main {
             var title = "Injury-Report-Output-from-" + endDate.minusDays(40).toString() +
                     "-to-" + endDate.toString() + ".txt";
             System.out.println("title: " + title);
-            for (int j = 0; j < 40; j++) {
+            for (int j = 40; j > 0; j--) {
                 try {
                     new InjuryReportScraper(endDate.minusDays(j), title).run();
                 } catch (Exception e) {
