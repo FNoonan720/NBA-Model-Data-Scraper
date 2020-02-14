@@ -15,30 +15,26 @@ public class InjuryReportScraper {
 
     LocalDate todaysDate;
     double hourOfDay;
-    String outputTitle;
 
-    public InjuryReportScraper(LocalDate date, String outputTitle) {
-        this.todaysDate = date;
+    public InjuryReportScraper() {
+        this.todaysDate = LocalDate.now();
         this.hourOfDay = LocalTime.now().getHour() + LocalTime.now().getMinute() / 60.0;
-        this.outputTitle = outputTitle;
     }
 
-    public boolean run() throws IOException {
+    public void run() throws IOException {
         if(getInjRepURL().equals("")) {
             System.out.println("\nError: There is no available injury report at this time.");
-            return false;
         }
         else {
             writeInjRepDataToFile(
                     pdfAtURLToText(
                             getInjRepURL()));
-            return true;
         }
     }
 
     public void writeInjRepDataToFile(String text) throws IOException {
         var csvFile = new File(new File("").getAbsolutePath() +
-                "\\" + outputTitle);
+                "\\Injury-Report-Output.txt");
         var fileWriter = new FileWriter(csvFile, true);
 
         if(text.equals("")) {
